@@ -1,0 +1,106 @@
+# Fontes do boletim diário sobre o Claude.
+# Campos:
+#   nome      -> nome curto mostrado no boletim
+#   url       -> endereço do feed RSS/Atom
+#   categoria -> pista para o resumo (oficial | lancamentos | mcp | comunidade | tutoriais | imprensa)
+#   filtrar   -> true = só aceita itens que mencionem as palavras-chave abaixo
+#                (usar em fontes genéricas: imprensa, HN, dev.to)
+# Fontes que falhem são ignoradas sem parar o boletim.
+
+palavras_chave:
+  - claude
+  - anthropic
+  - mcp
+  - model context protocol
+  - claude code
+  - agent sdk
+  - skills
+  - sonnet
+  - opus
+  - haiku
+
+palavras_publicidade:
+  - sponsored
+  - patrocinado
+  - promo code
+  - código promocional
+  - discount
+  - desconto
+  - affiliate
+  - giveaway
+  - "% off"
+  - black friday
+  - webinar registration
+
+feeds:
+  # --- Oficiais Anthropic ---
+  - nome: Anthropic News
+    url: https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml
+    categoria: oficial
+  - nome: Anthropic Engineering
+    url: https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_engineering.xml
+    categoria: oficial
+  - nome: Claude Code changelog
+    url: https://code.claude.com/docs/en/changelog/rss.xml
+    categoria: lancamentos
+
+  # --- Lançamentos no GitHub ---
+  - nome: claude-code releases
+    url: https://github.com/anthropics/claude-code/releases.atom
+    categoria: lancamentos
+  - nome: Python SDK releases
+    url: https://github.com/anthropics/anthropic-sdk-python/releases.atom
+    categoria: lancamentos
+  - nome: Agent SDK (Python) releases
+    url: https://github.com/anthropics/claude-agent-sdk-python/releases.atom
+    categoria: lancamentos
+  - nome: Anthropic Skills (commits)
+    url: https://github.com/anthropics/skills/commits/main.atom
+    categoria: lancamentos
+  - nome: MCP spec releases
+    url: https://github.com/modelcontextprotocol/modelcontextprotocol/releases.atom
+    categoria: mcp
+
+  # --- Comunidade ---
+  - nome: r/ClaudeAI
+    url: https://www.reddit.com/r/ClaudeAI/top/.rss?t=day
+    categoria: comunidade
+  - nome: r/ClaudeCode
+    url: https://www.reddit.com/r/ClaudeCode/top/.rss?t=day
+    categoria: comunidade
+  - nome: r/mcp
+    url: https://www.reddit.com/r/mcp/top/.rss?t=day
+    categoria: mcp
+  - nome: Hacker News (Claude)
+    url: https://hnrss.org/newest?q=Claude&points=20
+    categoria: comunidade
+    filtrar: true
+  - nome: Hacker News (Anthropic)
+    url: https://hnrss.org/newest?q=Anthropic&points=20
+    categoria: comunidade
+    filtrar: true
+  - nome: Hacker News (MCP)
+    url: https://hnrss.org/newest?q=MCP&points=15
+    categoria: mcp
+    filtrar: true
+
+  # --- Tutoriais e dicas ---
+  - nome: Simon Willison (claude)
+    url: https://simonwillison.net/tags/claude.atom
+    categoria: tutoriais
+  - nome: dev.to #claude
+    url: https://dev.to/feed/tag/claude
+    categoria: tutoriais
+  - nome: dev.to #mcp
+    url: https://dev.to/feed/tag/mcp
+    categoria: mcp
+
+  # --- Imprensa ---
+  - nome: Google News (EN)
+    url: https://news.google.com/rss/search?q=%22Claude%22+Anthropic+when:1d&hl=en-US&gl=US&ceid=US:en
+    categoria: imprensa
+    filtrar: true
+  - nome: Google News (PT)
+    url: https://news.google.com/rss/search?q=Claude+Anthropic+when:1d&hl=pt-PT&gl=PT&ceid=PT:pt-150
+    categoria: imprensa
+    filtrar: true

@@ -1,0 +1,5 @@
+palavras_chave: [claude, mcp, anthropic]
+palavras_publicidade: [sponsored, "% off"]
+feeds:
+  - {nome: Teste, url: tests/fixtures/feed.xml, categoria: tutoriais, filtrar: true}
+  - {nome: Partido, url: https://invalid.invalid/feed, categoria: imprensa}
