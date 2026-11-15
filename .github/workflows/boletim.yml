@@ -1,0 +1,73 @@
+name: Boletim diário Claude
+
+on:
+  # Cron do GitHub é em UTC. Lisboa = UTC+0 (inverno) / UTC+1 (verão).
+  # O script só envia quando já são >= 18h em Lisboa e ainda não enviou hoje.
+  schedule:
+    - cron: "0 17 * * *"
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Só pré-visualizar no log (não envia para o Telegram)"
+        type: boolean
+        default: false
+      guardar_estado:
+        description: "Marcar itens como enviados (não aconselhado em testes)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: boletim-claude
+  cancel-in-progress: false
+
+jobs:
+  boletim:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Obter código
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Dependências
+        run: pip install -r requirements.txt
+
+      - name: Gerar e enviar boletim
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            ARGS="--agendado"
+          else
+            [ "${{ inputs.dry_run }}" = "true" ] && ARGS="$ARGS --dry-run"
+            [ "${{ inputs.guardar_estado }}" = "true" ] && ARGS="$ARGS --guardar"
+          fi
+          python main.py $ARGS
+
+      - name: Gravar estado
+        if: success()
+        run: |
+          if git diff --quiet -- state/; then
+            echo "Estado sem alterações."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state/
+          git commit -m "chore: estado do boletim $(TZ=Europe/Lisbon date +%F)"
+          git push
